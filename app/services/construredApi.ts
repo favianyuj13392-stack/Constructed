@@ -67,10 +67,18 @@ export async function getProjectsList(): Promise<IProyecto[]> {
   try {
     const { data, error } = await supabase.from('proyectos').select('*').order('created_at', { ascending: false });
     if (error) throw error;
-    return [...(data as IProyecto[]), ...localProjects, ...PROJECTS_LIST];
+    
+    // Combinar todo
+    const allProjects = [...(data as IProyecto[]), ...localProjects, ...PROJECTS_LIST];
+    
+    // Deduplicar por ID (manteniendo el primero que encuentre, dando prioridad a Supabase)
+    const uniqueProjects = Array.from(new Map(allProjects.map(p => [p.id, p])).values());
+    
+    return uniqueProjects;
   } catch {
     // Fallback silencioso: localStorage + estáticos
-    return [...localProjects, ...PROJECTS_LIST];
+    const allProjects = [...localProjects, ...PROJECTS_LIST];
+    return Array.from(new Map(allProjects.map(p => [p.id, p])).values());
   }
 }
 
@@ -92,6 +100,7 @@ export async function createProject(proyectoData: Partial<IProyecto>): Promise<I
     areaM2: Number(proyectoData.areaM2) || 0,
     pisos: Number(proyectoData.pisos) || 1,
     estado: proyectoData.estado || 'Presupuesto generado',
+    imagen_id: proyectoData.imagen_id || null,
   };
 
   try {
