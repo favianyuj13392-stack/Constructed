@@ -148,7 +148,7 @@ function StepForm({ onNext }: { onNext: (data: FormData) => void }) {
           {/* Nombre */}
           <div>
             <label className={labelCls}>Nombre del proyecto</label>
-            <input className={inputCls} placeholder="Ej. Casa Familiar – Las Palmas" value={form.nombre} onChange={set('nombre')} />
+            <input className={inputCls} placeholder="Ej. Casa Familiar – Las Palmas" value={form.nombre} onChange={set('nombre')} required />
           </div>
 
           {/* Tipo obra / Tipo proyecto */}
@@ -181,10 +181,19 @@ function StepForm({ onNext }: { onNext: (data: FormData) => void }) {
           <div>
             <label className={labelCls}>Ubicación</label>
             <div className="relative">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth={2} className="absolute left-3 top-3.5 w-4 h-4">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth={2} className="absolute left-3 top-3.5 w-4 h-4 pointer-events-none z-10">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 2C8.686 2 6 4.686 6 8c0 5.25 6 13 6 13s6-7.75 6-13c0-3.314-2.686-6-6-6z" /><circle cx="12" cy="8" r="2" />
               </svg>
-              <input className={inputCls + " pl-9"} value={form.ubicacion} onChange={set('ubicacion')} placeholder="Ciudad, Bolivia" />
+              <select className={selectCls + " pl-9"} value={form.ubicacion} onChange={set('ubicacion')} required>
+                <option value="Santa Cruz, Bolivia">Santa Cruz, Bolivia</option>
+                <option value="La Paz, Bolivia">La Paz, Bolivia</option>
+                <option value="Cochabamba, Bolivia">Cochabamba, Bolivia</option>
+                <option value="El Alto, Bolivia">El Alto, Bolivia</option>
+                <option value="Beni, Bolivia">Beni, Bolivia</option>
+              </select>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="absolute right-3 top-3.5 w-4 h-4 text-gray-400 pointer-events-none">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
           </div>
 
@@ -193,14 +202,14 @@ function StepForm({ onNext }: { onNext: (data: FormData) => void }) {
             <div>
               <label className={labelCls}>Área construida estimada</label>
               <div className="relative">
-                <input className={inputCls + " pr-10"} type="number" placeholder="Ej. 180" value={form.area} onChange={set('area')} />
+                <input className={inputCls + " pr-10"} type="number" placeholder="Ej. 180" value={form.area} onChange={set('area')} required min="1" />
                 <span className="absolute right-3 top-3 text-xs text-gray-400 font-medium">m²</span>
               </div>
             </div>
             <div>
               <label className={labelCls}>Número de pisos</label>
               <div className="relative">
-                <input className={inputCls + " pr-12"} type="number" placeholder="Ej. 2" value={form.pisos} onChange={set('pisos')} />
+                <input className={inputCls + " pr-12"} type="number" placeholder="Ej. 2" value={form.pisos} onChange={set('pisos')} required min="1" />
                 <span className="absolute right-3 top-3 text-xs text-gray-400 font-medium">pisos</span>
               </div>
             </div>

@@ -80,10 +80,18 @@ export default function usePresupuestoCalculator(areaM2: number, pisos: number =
     granTotalComboBs: 0,
     granAhorroBs: 0,
   });
-  const [isCalculating, setIsCalculating] = useState<boolean>(true);
+  const [isCalculating, setIsCalculating] = useState<boolean>(false);
+
+  // ── Guard Clause: datos inválidos → estado seguro inmediato ──────────────
+  const isInvalidArea = !areaM2 || isNaN(areaM2) || areaM2 <= 0;
 
   useEffect(() => {
-    if (!areaM2) return;
+    if (isInvalidArea) {
+      setFasesCalculadas([]);
+      setTotales({ granTotalMercadoBs: 0, granTotalComboBs: 0, granAhorroBs: 0 });
+      setIsCalculating(false);
+      return;
+    }
 
     setIsCalculating(true);
 
@@ -141,14 +149,10 @@ export default function usePresupuestoCalculator(areaM2: number, pisos: number =
 
     const totalesGlobales = calcularTotalesGlobales(fases);
 
-    const timer = setTimeout(() => {
-      setFasesCalculadas(fases);
-      setTotales(totalesGlobales);
-      setIsCalculating(false);
-    }, 800);
-
-    return () => clearTimeout(timer);
-  }, [areaM2, pisos]);
+    setFasesCalculadas(fases);
+    setTotales(totalesGlobales);
+    setIsCalculating(false);
+  }, [areaM2, pisos, isInvalidArea]);
 
   return { fasesCalculadas, totales, isCalculating };
 }

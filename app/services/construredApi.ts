@@ -40,7 +40,7 @@ const simulateNetwork = <T>(data: T): Promise<T> =>
  * Retorna las métricas globales del dashboard principal.
  */
 export async function getGlobalMetrics(): Promise<IGlobalMetrics> {
-  return simulateNetwork(GLOBAL_METRICS);
+  return GLOBAL_METRICS;
 }
 
 /**
@@ -55,7 +55,7 @@ export async function getProjectsList(): Promise<IProyecto[]> {
     return [...(data as IProyecto[]), ...localProjects, ...PROJECTS_LIST];
   } catch {
     // Fallback silencioso: localStorage + estáticos
-    return simulateNetwork([...localProjects, ...PROJECTS_LIST]);
+    return [...localProjects, ...PROJECTS_LIST];
   }
 }
 
@@ -101,7 +101,7 @@ export async function getProjectById(id: string): Promise<IProyecto | null> {
   const localProjects = getLocalProjects();
   const fromLocal = localProjects.find((p) => p.id === id);
   if (fromLocal) {
-    return simulateNetwork(fromLocal);
+    return fromLocal;
   }
 
   // 2. Búsqueda en array estático o caso piloto legacy
@@ -109,7 +109,7 @@ export async function getProjectById(id: string): Promise<IProyecto | null> {
     (p) => p.id === id || (id === 'las-palmas' && p.id === 'proj-001')
   );
   if (staticProject) {
-    return simulateNetwork(staticProject);
+    return staticProject;
   }
 
   // 3. Búsqueda en Supabase
