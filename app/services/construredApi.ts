@@ -1,6 +1,6 @@
 // app/services/construredApi.ts
-// Capa de Servicios
-// Integración con Supabase y fallback a persistencia estática local
+// Capa de Servicios — Persistencia resiliente con localStorage + Supabase
+// BUG-003 Fix: Los proyectos sobreviven a recargas de página
 
 import type { IGlobalMetrics, IProyecto, IFase } from '../types/construred';
 import {
@@ -9,6 +9,28 @@ import {
   PILOT_PROJECT_PHASES,
 } from '../constants/mockData';
 import { supabase } from '../lib/supabaseClient';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Capa de persistencia local (localStorage) — SSR-safe
+// ─────────────────────────────────────────────────────────────────────────────
+const LOCAL_KEY = 'construred_projects';
+
+function getLocalProjects(): IProyecto[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(LOCAL_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalProject(proyecto: IProyecto): void {
+  if (typeof window === 'undefined') return;
+  const existing = getLocalProjects();
+  existing.unshift(proyecto);
+  localStorage.setItem(LOCAL_KEY, JSON.stringify(existing));
+}
 
 // Utilidad interna: simula latencia de red
 const simulateNetwork = <T>(data: T): Promise<T> =>
@@ -22,16 +44,18 @@ export async function getGlobalMetrics(): Promise<IGlobalMetrics> {
 }
 
 /**
- * Retorna la lista de proyectos del constructor (Mezcla de DB y local)
+ * Retorna la lista de proyectos (Supabase → localStorage → estáticos)
  */
 export async function getProjectsList(): Promise<IProyecto[]> {
+  const localProjects = getLocalProjects();
+
   try {
     const { data, error } = await supabase.from('proyectos').select('*').order('created_at', { ascending: false });
     if (error) throw error;
-    return [...(data as IProyecto[]), ...PROJECTS_LIST];
-  } catch (err) {
-    // Fallback silencioso
-    return simulateNetwork(PROJECTS_LIST);
+    return [...(data as IProyecto[]), ...localProjects, ...PROJECTS_LIST];
+  } catch {
+    // Fallback silencioso: localStorage + estáticos
+    return simulateNetwork([...localProjects, ...PROJECTS_LIST]);
   }
 }
 
@@ -43,7 +67,7 @@ export async function getPilotProjectDetails(): Promise<IFase[]> {
 }
 
 /**
- * Crea un proyecto nuevo en Supabase con fallback a memoria local.
+ * Crea un proyecto nuevo en Supabase con fallback a localStorage.
  */
 export async function createProject(proyectoData: Partial<IProyecto>): Promise<IProyecto> {
   const newProject: IProyecto = {
@@ -58,31 +82,42 @@ export async function createProject(proyectoData: Partial<IProyecto>): Promise<I
   try {
     const { data, error } = await supabase.from('proyectos').insert(newProject).select().single();
     if (error) throw error;
+    // También guardar en localStorage para resiliencia
+    saveLocalProject(data as IProyecto);
     return data as IProyecto;
-  } catch (err) {
-    console.warn('Supabase fallback: guardando en memoria local', err);
-    PROJECTS_LIST.unshift(newProject); // Fallback a estado local
+  } catch {
+    // Fallback: persistir en localStorage (sobrevive a recargas)
+    saveLocalProject(newProject);
     return newProject;
   }
 }
 
 /**
  * Retorna un proyecto específico por ID.
+ * Orden de búsqueda: localStorage → estáticos → Supabase
  */
 export async function getProjectById(id: string): Promise<IProyecto | null> {
-  // Búsqueda en memoria local o caso piloto
-  const localProject = PROJECTS_LIST.find((p) => p.id === id || (id === 'las-palmas' && p.id === 'proj-001'));
-  if (localProject) {
-    return simulateNetwork(localProject);
+  // 1. Búsqueda en localStorage (proyectos dinámicos del usuario)
+  const localProjects = getLocalProjects();
+  const fromLocal = localProjects.find((p) => p.id === id);
+  if (fromLocal) {
+    return simulateNetwork(fromLocal);
   }
 
-  // Búsqueda en DB
+  // 2. Búsqueda en array estático o caso piloto legacy
+  const staticProject = PROJECTS_LIST.find(
+    (p) => p.id === id || (id === 'las-palmas' && p.id === 'proj-001')
+  );
+  if (staticProject) {
+    return simulateNetwork(staticProject);
+  }
+
+  // 3. Búsqueda en Supabase
   try {
     const { data, error } = await supabase.from('proyectos').select('*').eq('id', id).single();
     if (error) throw error;
     return data as IProyecto;
-  } catch (err) {
-    console.warn(`Proyecto ${id} no encontrado en Supabase`);
+  } catch {
     return null;
   }
 }

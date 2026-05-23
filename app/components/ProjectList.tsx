@@ -39,7 +39,6 @@ interface ProjectCardProps {
 
 function ProjectCard({ proyecto }: ProjectCardProps) {
   const extra = PROJECT_EXTRA[proyecto.id] ?? { inicio: '2024' };
-  const isPilot = proyecto.id === 'proj-001';
   const hasPresupuesto = proyecto.estado === 'Presupuesto generado';
 
   const CardContent = (
@@ -132,15 +131,11 @@ function ProjectCard({ proyecto }: ProjectCardProps) {
     </div>
   );
 
-  if (isPilot) {
-    return (
-      <Link href="/proyecto/las-palmas" className="block">
-        {CardContent}
-      </Link>
-    );
-  }
-
-  return <div>{CardContent}</div>;
+  return (
+    <Link href={`/proyecto/${proyecto.id}`} className="block">
+      {CardContent}
+    </Link>
+  );
 }
 
 interface ProjectListProps {

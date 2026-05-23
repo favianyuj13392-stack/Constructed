@@ -13,7 +13,7 @@ export interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="es" className="h-full">
-      <body className="bg-gray-50 text-slate-900 antialiased min-h-screen">
+      <body className="bg-gray-50 text-slate-900 antialiased min-h-screen" suppressHydrationWarning>
         {children}
       </body>
     </html>

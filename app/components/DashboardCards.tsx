@@ -79,7 +79,7 @@ interface DashboardCardsProps {
 export default function DashboardCards({ metrics, isLoading }: DashboardCardsProps) {
   if (isLoading || !metrics) {
     return (
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[...Array(4)].map((_, i) => <MetricCardSkeleton key={i} />)}
       </div>
     );
@@ -115,7 +115,7 @@ export default function DashboardCards({ metrics, isLoading }: DashboardCardsPro
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {cards.map((card, i) => (
         <MetricCard key={i} {...card} />
       ))}

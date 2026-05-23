@@ -1,6 +1,7 @@
 'use client';
 
 import type { ICalculatedFase, IPresupuestoTotals } from '../hooks/usePresupuestoCalculator';
+import type { IProyecto } from '../types/construred';
 
 const fmt = (n: number, dec = 0) =>
   n.toLocaleString('es-BO', { minimumFractionDigits: dec, maximumFractionDigits: dec });
@@ -11,9 +12,10 @@ interface ExecutiveSummaryProps {
   fasesCalculadas: ICalculatedFase[];
   totales: IPresupuestoTotals;
   onViewPhases: () => void;
+  proyecto?: IProyecto | null;
 }
 
-export default function ExecutiveSummary({ fasesCalculadas, totales, onViewPhases }: ExecutiveSummaryProps) {
+export default function ExecutiveSummary({ fasesCalculadas, totales, onViewPhases, proyecto }: ExecutiveSummaryProps) {
   const totalUSD = totales.granTotalMercadoBs * 6.96;
   const pct = totales.granTotalMercadoBs > 0
     ? ((totales.granAhorroBs / totales.granTotalMercadoBs) * 100).toFixed(2)
@@ -25,10 +27,10 @@ export default function ExecutiveSummary({ fasesCalculadas, totales, onViewPhase
       <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex gap-3 items-start">
         <div className="w-16 h-16 rounded-xl bg-gray-200 flex items-center justify-center text-2xl shrink-0">🏠</div>
         <div className="flex-1">
-          <h3 className="text-sm font-bold text-[#1B5E3B]">Casa Familiar – Las Palmas</h3>
-          <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">📍 Santa Cruz, Bolivia</p>
+          <h3 className="text-sm font-bold text-[#1B5E3B]">{proyecto?.nombre || 'Proyecto sin nombre'}</h3>
+          <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">📍 {proyecto?.ubicacion || 'Sin ubicación'}</p>
           <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
-            <span>📐 191 m²</span><span>🏢 2 pisos</span><span>📅 Inicio: 15 may 2026</span>
+            <span>📐 {proyecto?.areaM2 || 0} m²</span><span>🏢 {proyecto?.pisos || 1} {(proyecto?.pisos || 1) === 1 ? 'piso' : 'pisos'}</span>
           </div>
           <button className="text-xs text-[#1B5E3B] font-semibold mt-1 flex items-center gap-1">
             Ver detalles del proyecto

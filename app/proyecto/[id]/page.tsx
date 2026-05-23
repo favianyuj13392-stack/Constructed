@@ -133,7 +133,7 @@ export default function ProjectPage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 pt-5">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 pt-5">
         {/* Título */}
         <div className="mb-5">
           <h1 className="text-2xl font-bold text-[#1B5E3B]">Dashboard Financiero</h1>
@@ -167,6 +167,7 @@ export default function ProjectPage() {
             fasesCalculadas={fasesCalculadas}
             totales={totales}
             onViewPhases={() => setActiveTab('fases')}
+            proyecto={proyecto}
           />
         ) : (
           <PhaseTable
