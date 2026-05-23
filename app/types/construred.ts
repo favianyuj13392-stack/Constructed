@@ -25,6 +25,7 @@ export interface IProyecto {
   areaM2: number;
   pisos: number;
   estado: 'Borrador' | 'En carga' | 'En análisis' | 'Presupuesto generado';
+  imagen_id?: string;
   fases?: IFase[];
 }
 

@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createProject } from '../services/construredApi';
+import { uploadImage } from '../services/imageService';
 
 // ── Íconos ─────────────────────────────────────────────────────────────────
 function IconBack() {
@@ -357,6 +358,8 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [comments, setComments] = useState('');
   const [files, setFiles] = useState<FileEntry[]>([
     { label: 'Planos arquitectónicos', formats: 'PDF, JPG, PNG, DWG', description: 'Ej. Plantas, cortes, fachadas, etc.', required: true, file: null },
@@ -366,6 +369,17 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
   ]);
 
   const fileRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    setCoverImage(file);
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file));
+    } else {
+      setPreviewUrl(null);
+    }
+  };
 
   const handleFileChange = (idx: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] ?? null;
@@ -375,12 +389,22 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
   const handleProcess = () => {
     setIsProcessing(true);
     setTimeout(async () => {
+      let imagen_id;
+      if (coverImage) {
+        try {
+          imagen_id = await uploadImage(coverImage);
+        } catch (error) {
+          console.error("Error uploading image:", error);
+        }
+      }
+
       const nuevoProyecto = await createProject({
         nombre: formData.nombre,
         ubicacion: formData.ubicacion,
         areaM2: Number(formData.area) || 0,
         pisos: Number(formData.pisos) || 1,
         estado: 'Presupuesto generado',
+        imagen_id,
       });
       router.push('/proyecto/' + nuevoProyecto.id);
     }, 2000);
@@ -388,12 +412,22 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
 
   const handleSaveDraft = async () => {
     setIsSavingDraft(true);
+    let imagen_id;
+    if (coverImage) {
+      try {
+        imagen_id = await uploadImage(coverImage);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
+    }
+
     await createProject({
       nombre: formData.nombre,
       ubicacion: formData.ubicacion,
       areaM2: Number(formData.area) || 0,
       pisos: Number(formData.pisos) || 1,
       estado: 'Borrador',
+      imagen_id,
     });
     router.push('/');
   };
@@ -411,7 +445,13 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
 
         {/* Resumen del proyecto */}
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex gap-3 items-start">
-          <div className="w-16 h-16 rounded-xl bg-gray-200 flex items-center justify-center shrink-0 text-2xl">🏠</div>
+          <div className="w-16 h-16 rounded-xl bg-gray-200 flex items-center justify-center shrink-0 text-2xl relative overflow-hidden">
+            {previewUrl ? (
+              <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+            ) : (
+              '🏠'
+            )}
+          </div>
           <div className="flex-1">
             <h3 className="text-sm font-bold text-[#1B5E3B]">{formData.nombre || 'Casa Familiar – Las Palmas'}</h3>
             <div className="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
@@ -428,6 +468,25 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6" />
               </svg>
             </button>
+          </div>
+        </div>
+
+        {/* Imagen principal (Cloudinary) */}
+        <div>
+          <h2 className="text-sm font-bold text-[#1B5E3B] mb-3">Imagen de portada del proyecto</h2>
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col items-center justify-center border-dashed border-2 border-gray-200 hover:border-[#1B5E3B] transition-colors cursor-pointer" onClick={() => imageInputRef.current?.click()}>
+            {previewUrl ? (
+              <div className="w-full h-32 relative rounded-xl overflow-hidden mb-2">
+                <img src={previewUrl} alt="Cover preview" className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-[#1B5E3B] mb-2">
+                <IconUpload />
+              </div>
+            )}
+            <p className="text-sm font-semibold text-gray-800">{coverImage ? coverImage.name : 'Subir imagen principal'}</p>
+            <p className="text-xs text-gray-400">Formatos: JPG, PNG, WEBP</p>
+            <input type="file" accept="image/*" className="hidden" ref={imageInputRef} onChange={handleImageChange} />
           </div>
         </div>
 

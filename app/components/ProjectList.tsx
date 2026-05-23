@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import type { IProyecto } from '../types/construred';
 import StatusBadge from './StatusBadge';
 import { ProjectCardSkeleton } from './SkeletonCard';
@@ -16,7 +17,7 @@ const PROJECT_IMAGES: Record<string, string> = {
 // Fallback SVG para imágenes de proyecto
 function ProjectImageFallback() {
   return (
-    <div className="w-20 h-20 rounded-xl bg-gray-200 flex items-center justify-center shrink-0">
+    <div className="w-20 h-20 rounded-xl bg-gray-200 flex items-center justify-center shrink-0 absolute inset-0">
       <svg viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth={1.5} className="w-8 h-8">
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" />
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 21V12h6v9" />
@@ -24,6 +25,10 @@ function ProjectImageFallback() {
     </div>
   );
 }
+
+const cloudinaryLoader = ({ src, width, quality }: { src: string, width: number, quality?: number }) => {
+  return `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/w_${width},q_${quality || 75}/${src}`;
+};
 
 // ── Info de proyectos complementaria ──────────────────────────────────────
 const PROJECT_EXTRA: Record<string, { costo?: string; ahorro?: string; inicio: string }> = {
@@ -44,8 +49,12 @@ function ProjectCard({ proyecto }: ProjectCardProps) {
   const CardContent = (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex gap-3 items-start transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 hover:border-green-200 cursor-pointer group">
       {/* Imagen */}
-      <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100">
-        <ProjectImageFallback />
+      <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100 relative">
+        {proyecto.imagen_id ? (
+          <Image loader={cloudinaryLoader} src={proyecto.imagen_id} fill alt={proyecto.nombre} className="object-cover" />
+        ) : (
+          <ProjectImageFallback />
+        )}
       </div>
 
       {/* Info */}
