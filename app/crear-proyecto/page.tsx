@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { createProject } from '../services/construredApi';
 
 // ── Íconos ─────────────────────────────────────────────────────────────────
 function IconBack() {
@@ -290,7 +291,16 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
 
   const handleProcess = () => {
     setIsProcessing(true);
-    setTimeout(() => router.push('/proyecto/las-palmas'), 2000);
+    setTimeout(async () => {
+      const nuevoProyecto = await createProject({
+        nombre: formData.nombre,
+        ubicacion: formData.ubicacion,
+        areaM2: Number(formData.area) || 0,
+        pisos: Number(formData.pisos) || 1,
+        estado: 'Presupuesto generado',
+      });
+      router.push('/proyecto/' + nuevoProyecto.id);
+    }, 2000);
   };
 
   const docIcons = ['📄', '📊', '📋', '🖼️'];

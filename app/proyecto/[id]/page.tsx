@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getPilotProjectDetails } from '../../services/construredApi';
+import { useParams } from 'next/navigation';
+import { getProjectById } from '../../services/construredApi';
 import usePresupuestoCalculator from '../../hooks/usePresupuestoCalculator';
-import type { IFase } from '../../types/construred';
+import type { IProyecto } from '../../types/construred';
 import ExecutiveSummary from '../../components/ExecutiveSummary';
 import PhaseTable from '../../components/PhaseTable';
 
@@ -103,20 +104,24 @@ function LoadingSkeleton() {
 // ── Vista principal ─────────────────────────────────────────────────────────
 type TabView = 'resumen' | 'fases';
 
-export default function LaPalmasPage() {
-  const [fasesBase, setFasesBase] = useState<IFase[]>([]);
+export default function ProjectPage() {
+  const params = useParams();
+  const id = params?.id as string;
+
+  const [proyecto, setProyecto] = useState<IProyecto | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState<TabView>('resumen');
   const [activeFaseIdx, setActiveFaseIdx] = useState(0);
 
   useEffect(() => {
-    getPilotProjectDetails().then((data) => {
-      setFasesBase(data);
+    if (!id) return;
+    getProjectById(id).then((data) => {
+      setProyecto(data);
       setIsLoadingData(false);
     });
-  }, []);
+  }, [id]);
 
-  const { fasesCalculadas, totales, isCalculating } = usePresupuestoCalculator(fasesBase);
+  const { fasesCalculadas, totales, isCalculating } = usePresupuestoCalculator(proyecto?.areaM2 || 0, proyecto?.pisos || 1);
   const isLoading = isLoadingData || isCalculating;
 
   const TABS: { key: TabView; label: string }[] = [
@@ -132,7 +137,9 @@ export default function LaPalmasPage() {
         {/* Título */}
         <div className="mb-5">
           <h1 className="text-2xl font-bold text-[#1B5E3B]">Dashboard Financiero</h1>
-          <p className="text-sm text-gray-500 mt-1">Casa Familiar – Las Palmas · Presupuesto generado</p>
+          <p className="text-sm text-gray-500 mt-1">
+            {proyecto ? `${proyecto.nombre} · ${proyecto.estado}` : 'Cargando...'}
+          </p>
         </div>
 
         {/* Tabs de navegación */}
