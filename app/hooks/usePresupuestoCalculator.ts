@@ -2,7 +2,7 @@
 
 // app/hooks/usePresupuestoCalculator.ts
 // Motor de Cálculo Matemático — Separación estricta de responsabilidades
-// REGLA VISUAL: USD = Bs * 6.96 (multiplicación directa, NO división)
+// REGLA VISUAL: BOB = USD * 6.96 (multiplicación directa, NO división)
 
 import { useState, useEffect } from 'react';
 import type { IFase, IMaterial } from '../types/construred';

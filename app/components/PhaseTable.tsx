@@ -97,7 +97,7 @@ export default function PhaseTable({ fasesCalculadas, activeFaseIdx, onFaseChang
             <p className="text-xs text-gray-400 mt-0.5">Incluye trabajos iniciales, preparación del terreno y materiales estimados.</p>
           </div>
           <div className="shrink-0 text-right bg-gray-50 rounded-xl px-3 py-2">
-            <p className="text-[10px] text-gray-500">Costo estimado (BOB)</p>
+            <p className="text-[10px] text-gray-500">Costo estimado (USD)</p>
             <p className="text-lg font-bold text-gray-900">{(fase.subtotalMercadoBs).toLocaleString('es-BO', { maximumFractionDigits: 0 })}</p>
           </div>
         </div>
@@ -114,11 +114,11 @@ export default function PhaseTable({ fasesCalculadas, activeFaseIdx, onFaseChang
               <tr>
                 <th className="text-left px-3 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wide">DESCRIPCIÓN</th>
                 <th className="text-center px-2 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wide">UN.</th>
-                <th className="text-right px-2 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wide">P.U. (Bs)</th>
                 <th className="text-right px-2 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wide">P.U. (USD)</th>
+                <th className="text-right px-2 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wide">P.U. (BOB)</th>
                 <th className="text-right px-2 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wide">CANT</th>
-                <th className="text-right px-2 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wide">TOTAL (Bs.)</th>
-                <th className="text-right px-3 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wide">TOTAL (USD)</th>
+                <th className="text-right px-2 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wide">TOTAL (USD)</th>
+                <th className="text-right px-3 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wide">TOTAL (BOB)</th>
               </tr>
             </thead>
             <tbody>
@@ -128,7 +128,7 @@ export default function PhaseTable({ fasesCalculadas, activeFaseIdx, onFaseChang
             </tbody>
             <tfoot className="bg-green-50">
               <tr>
-                <td colSpan={5} className="px-3 py-3 text-xs font-bold text-[#1B5E3B]">Total materiales fase (BOB)</td>
+                <td colSpan={5} className="px-3 py-3 text-xs font-bold text-[#1B5E3B]">Total materiales fase (USD)</td>
                 <td className="px-2 py-3 text-right text-sm font-bold text-[#1B5E3B]">{fmt(fase.subtotalMercadoBs)}</td>
                 <td className="px-3 py-3 text-right text-xs font-bold text-gray-600">{fmt(fase.subtotalMercadoBs * 6.96)}</td>
               </tr>
@@ -143,9 +143,9 @@ export default function PhaseTable({ fasesCalculadas, activeFaseIdx, onFaseChang
             <div>
               <p className="text-xs font-bold text-[#1B5E3B]">Ahorro con Combo Construred en esta fase</p>
               <p className="text-xs text-green-700">
-                Precio mercado: <span className="line-through">Bs {fmt(fase.subtotalMercadoBs)}</span> →
-                Precio combo: <span className="font-bold">Bs {fmt(fase.subtotalComboBs)}</span> —
-                Ahorro: <span className="font-bold">Bs {fmt(fase.ahorroFaseBs)}</span>
+                Precio mercado: <span className="line-through">USD {fmt(fase.subtotalMercadoBs)}</span> →
+                Precio combo: <span className="font-bold">USD {fmt(fase.subtotalComboBs)}</span> —
+                Ahorro: <span className="font-bold">USD {fmt(fase.ahorroFaseBs)}</span>
               </p>
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function PhaseTable({ fasesCalculadas, activeFaseIdx, onFaseChang
         <span className="text-green-600">ℹ️</span>
         <div>
           <p className="text-xs font-semibold text-green-800">Importante</p>
-          <p className="text-xs text-green-700">Los precios son referenciales y pueden variar según el mercado y la ubicación. T/C aplicado: USD = Bs × 6.96</p>
+          <p className="text-xs text-green-700">Los precios son referenciales y pueden variar según el mercado y la ubicación. T/C aplicado: BOB = USD × 6.96</p>
         </div>
       </div>
     </div>
