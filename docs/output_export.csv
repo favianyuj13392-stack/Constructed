@@ -1,0 +1,62 @@
+,PROYECTO,VIVIENDA UNIFAMILIAR,,,,,,
+,M2,191,,,,,,
+,FECHA,23 de mayo de 2026,,,,,,
+,T/C,6.96,,,,,,
+,FUENTE,REVISTA PRECIOS Y CONSTRUCCIÓN ,,,,,,
+,,,,,,,,
+,,,,,,,,
+ITEM,Fases,DESCRIPCIÓN,UN.,"P.U.
+[Bs]","P.U.
+[USD]",CANT,"TOTAL
+[USD]","TOTAL
+[Bs.]"
+,,,,,,,,
+1,Primera Fase,INSTALACIÓN DE FAENAS,glb, 14.5 , 100.7 , 0.0 , 14.5 , 100.7 
+2,Primera Fase,NIVELACIÓN DE TERRENO (no clasificado),m², 0.2 , 1.3 , 3.8 , 18.4 , 127.9 
+3,Primera Fase,TRAZADO Y REPLANTEO,m², 0.1 , 0.4 , 3.8 , 4.9 , 34.2 
+4,Primera Fase,FUNDACIONES DE HORMIGON ARMADO,m3, 19.7 , 136.9 , 0.5 , 246.1 ," 1,712.7 "
+5,Segunda Fase,VIGAS DE HORMIGON ARMADO,m3, 15.4 , 107.1 , 2.7 ," 1,043.1 "," 7,260.2 "
+6,Segunda Fase,COLUMNAS DE HORMIGON ARMADO,m3, 22.7 , 157.7 , 0.2 , 110.5 , 769.0 
+7,Segunda Fase,SOBRECIMIENTO DE H°C°,m3, 19.7 , 136.9 , 0.3 , 151.4 ," 1,053.5 "
+8,Segunda Fase,CIMIENTO DE H°C°,m3, 5.3 , 37.0 , 0.8 , 109.0 , 758.5 
+9,Tercera Obra,LOSA DE HORMIGÓN CON VIGUETA PREFABRICADA,m², 2.2 , 15.1 , 7.6 , 414.8 ," 2,886.9 "
+10,Tercera Obra,INSTALACION AGUA POTABLE,pto, 2.9 , 19.9 , 0.3 , 22.9 , 159.1 
+11,Tercera Obra,INSTALACION SANITARIA,pto, 2.8 , 19.7 , 0.3 , 22.6 , 157.3 
+12,Tercera Obra,CIELO FALSO,m², 1.2 , 8.1 , 6.0 , 174.7 ," 1,216.0 "
+13,Tercera Obra,MURO DE LADRILLO 6H,m², 0.9 , 5.9 , 14.7 , 314.1 ," 2,186.1 "
+14,Tercera Obra,RETIRO DE ESCOMBROS,glb, 12.6 , 87.7 , 0.0 , 12.6 , 87.7 
+15,Cuarta Fase,PISO DE CERÁMICA NACIONAL,m², 1.6 , 11.0 , 1.8 , 71.3 , 496.2 
+16,Cuarta Fase,PISO DE MADERA TAJIBO,m², 8.0 , 55.6 , 5.8 ," 1,163.8 "," 8,099.9 "
+17,Cuarta Fase,ZOCALO DE CERÁMICA H=10CM,ml, 0.4 , 2.6 , 2.5 , 23.3 , 162.1 
+18,Cuarta Fase,REVESTIMIENTO CERAMICO,m², 1.7 , 11.7 , 1.0 , 40.5 , 282.0 
+19,Cuarta Fase,PUERTA DE MADERA 0.90 X 2.10 MTS,pza, 9.7 , 67.2 , 0.0 , 9.7 , 67.2 
+20,Cuarta Fase,PUERTA DE MADERA 0.80 X 2.10 MTS,pza, 8.2 , 57.3 , 0.2 , 32.9 , 229.2 
+21,Cuarta Fase,PUERTA DE MADERA 0.70 X 2.10 MTS,pza, 7.9 , 54.8 , 0.3 , 62.9 , 438.1 
+22,Cuarta Fase,"VENTANA METALICA (ANGULAR 1""X1/8"")",m², 3.1 , 21.7 , 0.3 , 24.9 , 173.6 
+23,Cuarta Fase,PINTURA LATEX INTERIOR,m², 0.1 , 1.0 , 13.4 , 48.2 , 335.2 
+24,Cuarta Fase,PINTURA LATEX EXTERIOR,m², 0.2 , 1.3 , 9.0 , 41.2 , 286.9 
+25,Cuarta Fase,BASE PARA DUCHA,pza, 4.9 , 34.1 , 0.1 , 14.7 , 102.4 
+26,Cuarta Fase,LAVAMANOS MAS ACCESORIOS,pza, 6.3 , 43.7 , 0.2 , 25.1 , 174.7 
+27,Cuarta Fase,INODORO,pza, 6.2 , 42.9 , 0.2 , 24.6 , 171.5 
+28,Cuarta Fase,LAVAPLATOS 1 DEP.,pza, 6.3 , 44.0 , 0.0 , 6.3 , 44.0 
+29,Cuarta Fase,LAVAROPA 1 DEP.,pza, 4.6 , 32.1 , 0.0 , 4.6 , 32.1 
+30,Cuarta Fase,MESON PARA COCINA DE H°A° c/revestimiento cerámico,m², 2.0 , 14.0 , 0.1 , 4.9 , 34.3 
+31,Cuarta Fase,CÁMARA DE INSPECCIÓN (60 x 60) - H°C° 70% P.D.,pza, 5.7 , 39.6 , 0.1 , 17.1 , 118.9 
+32,Cuarta Fase,TAPAS DE HORMIGÓN ARMADO (70x70) - e = 7 cm,pza, 1.8 , 12.4 , 0.1 , 5.3 , 37.1 
+33,Cuarta Fase,INSTALACION ELECTRICA (CAJA MAS TERMICOS y PILASTRA),glb, 22.6 , 157.2 , 0.1 , 45.2 , 314.4 
+34,Cuarta Fase,PUNTO DE ILUMINACION INCANDESCENTE,pto, 0.7 , 5.0 , 0.5 , 8.6 , 59.7 
+35,Cuarta Fase,TOMACORRIENTES DOBLES,pto, 0.7 , 4.6 , 0.6 , 9.8 , 68.4 
+36,Cuarta Fase,INTERRUPTORES,pto, 0.4 , 3.0 , 0.5 , 5.2 , 36.3 
+37,Cuarta Fase,INSTALACION ELECTRICA (TELÉFONO) - CON CABLE,pto, 1.4 , 9.7 , 0.1 , 2.8 , 19.4 
+38,Cuarta Fase,INSTALACION ELECTRICA (TELEVISIÓN) - SIN CABLE,pto, 0.9 , 6.0 , 0.2 , 5.1 , 35.8 
+39,Cuarta Fase,INSTALACION ELECTRICA (DUCHA),pto, 1.7 , 11.5 , 0.2 , 6.6 , 46.1 
+40,Cuarta Fase,REVOQUE INTERIOR CON ESTUCO,M2, 0.5 , 3.7 , 13.4 , 177.7 ," 1,236.7 "
+41,Cuarta Fase,REVOQUE EXTERIOR PIRULEADO,m², 3.6 , 25.3 , 9.0 , 814.6 ," 5,669.3 "
+42,Cuarta Fase,CARPETA  DE  HORMIGON  SIMPLE   E=8 CM DOSIF. 1:2:3 C/EMPEDRADO,m², 0.9 , 6.0 , 1.3 , 27.6 , 192.4 
+,,,,,,,,
+,TOTAL PRESUPUESTO ,,,,,,"134,604.91 $us","936,850.15 Bs."
+,INDICE POR METRO CUADRADO (65 M2),,,,,,704.74 $us,"4,904.97 Bs."
+,CANTIDAD DE CEMENTO EN OBRA (KG),,,,,,," 50,973.45 "
+,PRECIO UNITARIO BOLSA DE CEMENTO (LISTA),,,,,,, 81.00 
+,PRESUPUESTO DE CEMENTO EN OBRA (BS),,,,,,," 82,576.98 "
+,INCIDENCIA EN OBRA (%),,,,,,,8.81%
