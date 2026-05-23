@@ -79,23 +79,96 @@ function Header({ onBack }: { onBack: () => void }) {
 
 // ── Bottom Nav ──────────────────────────────────────────────────────────────
 function BottomNav() {
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const items = [
+    {
+      label: 'Inicio',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 21V12h6v9" />
+        </svg>
+      ),
+      href: '/',
+    },
+    {
+      label: 'Proyectos',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
+        </svg>
+      ),
+    },
+    { label: 'Nuevo', isCenter: true },
+    {
+      label: 'Combos',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Perfil',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" />
+        </svg>
+      ),
+    },
+  ];
+
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 z-50 max-w-7xl mx-auto">
-      <Link href="/" className="flex flex-col items-center gap-0.5 text-xs text-gray-400 hover:text-gray-600"><IconHome />Inicio</Link>
-      <button className="flex flex-col items-center gap-0.5 text-xs text-gray-400">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" /></svg>
-        Proyectos
-      </button>
-      <Link href="/crear-proyecto" className="w-14 h-14 rounded-full bg-[#1B5E3B] flex items-center justify-center shadow-lg -mt-5 text-white hover:bg-[#164d30] transition-colors"><IconPlus /></Link>
-      <button className="flex flex-col items-center gap-0.5 text-xs text-gray-400">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" /></svg>
-        Combos
-      </button>
-      <button className="flex flex-col items-center gap-0.5 text-xs text-gray-400">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-        Perfil
-      </button>
-    </nav>
+    <>
+      {toast && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[60] animate-fade-in">
+          <div className="bg-gray-800 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 whitespace-nowrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3.5 h-3.5 text-yellow-400 shrink-0">
+              <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            {toast}
+          </div>
+        </div>
+      )}
+
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 z-50 max-w-7xl mx-auto">
+        {items.map((item) =>
+          item.isCenter ? (
+            <Link
+              key={item.label}
+              href="/crear-proyecto"
+              className="w-14 h-14 rounded-full bg-[#1B5E3B] flex items-center justify-center shadow-lg -mt-5 text-white hover:bg-[#164d30] transition-colors duration-200"
+            >
+              <IconPlus />
+            </Link>
+          ) : item.href ? (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="flex flex-col items-center gap-0.5 text-xs text-gray-400 hover:text-gray-600 transition-colors duration-150"
+            >
+              {item.icon}
+              {item.label}
+            </Link>
+          ) : (
+            <button
+              key={item.label}
+              onClick={() => showToast('Disponible en la Versión 1.0 🚀')}
+              className="flex flex-col items-center gap-0.5 text-xs text-gray-400 hover:text-gray-600 transition-colors duration-150"
+            >
+              {item.icon}
+              {item.label}
+            </button>
+          )
+        )}
+      </nav>
+    </>
   );
 }
 
@@ -283,6 +356,7 @@ interface FileEntry { label: string; formats: string; description: string; requi
 function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => void }) {
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [comments, setComments] = useState('');
   const [files, setFiles] = useState<FileEntry[]>([
     { label: 'Planos arquitectónicos', formats: 'PDF, JPG, PNG, DWG', description: 'Ej. Plantas, cortes, fachadas, etc.', required: true, file: null },
@@ -310,6 +384,18 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
       });
       router.push('/proyecto/' + nuevoProyecto.id);
     }, 2000);
+  };
+
+  const handleSaveDraft = async () => {
+    setIsSavingDraft(true);
+    await createProject({
+      nombre: formData.nombre,
+      ubicacion: formData.ubicacion,
+      areaM2: Number(formData.area) || 0,
+      pisos: Number(formData.pisos) || 1,
+      estado: 'Borrador',
+    });
+    router.push('/');
   };
 
   const docIcons = ['📄', '📊', '📋', '🖼️'];
@@ -398,17 +484,14 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
       </main>
 
       {/* CTA Fijo */}
-      <div className="fixed bottom-16 left-0 right-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-3 bg-gray-50/90 backdrop-blur-sm">
+      <div className="fixed bottom-16 left-0 right-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-3 bg-gray-50/90 backdrop-blur-sm space-y-2">
         <button
           onClick={handleProcess}
-          disabled={isProcessing}
+          disabled={isProcessing || isSavingDraft}
           className="w-full bg-[#1B5E3B] text-white font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-lg hover:bg-[#164d30] active:scale-[0.98] transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-90"
         >
           {isProcessing ? (
-            <>
-              <IconSpinner />
-              Analizando con IA...
-            </>
+            <><IconSpinner />Analizando con IA...</>
           ) : (
             <>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
@@ -418,7 +501,25 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
             </>
           )}
         </button>
-        <p className="text-center text-xs text-gray-400 mt-2 flex items-center justify-center gap-1">
+
+        <button
+          onClick={handleSaveDraft}
+          disabled={isProcessing || isSavingDraft}
+          className="w-full bg-white text-gray-600 font-semibold rounded-2xl py-3 flex items-center justify-center gap-2 border border-gray-200 hover:bg-gray-50 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSavingDraft ? (
+            <><IconSpinner />Guardando...</>
+          ) : (
+            <>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+              </svg>
+              Guardar como Borrador
+            </>
+          )}
+        </button>
+
+        <p className="text-center text-xs text-gray-400 mt-1 flex items-center justify-center gap-1">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3 h-3">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0110 0v4" />
           </svg>

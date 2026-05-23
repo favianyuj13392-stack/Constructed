@@ -37,10 +37,25 @@ const simulateNetwork = <T>(data: T): Promise<T> =>
   new Promise((resolve) => setTimeout(() => resolve(data), 600));
 
 /**
- * Retorna las métricas globales del dashboard principal.
+ * Retorna métricas globales calculadas dinámicamente desde la lista real de proyectos.
  */
 export async function getGlobalMetrics(): Promise<IGlobalMetrics> {
-  return GLOBAL_METRICS;
+  const proyectos = await getProjectsList();
+
+  const proyectosTotales = proyectos.length;
+
+  const conPresupuesto = proyectos.filter((p) => p.estado === 'Presupuesto generado');
+  const presupuestosGenerados = conPresupuesto.length;
+
+  // Ahorro estimado por proyecto: piloto usa valor real, dinámicos usan areaM2 * 4.5
+  const ahorroTotalEstimadoBs = conPresupuesto.reduce((acc, p) => {
+    if (p.id === 'proj-001') return acc + 868; // Piloto: valor calculado real
+    return acc + Math.round((p.areaM2 || 0) * 4.5);
+  }, 0);
+
+  const cashbackProyectadoBs = Math.round(ahorroTotalEstimadoBs * 0.25);
+
+  return { proyectosTotales, presupuestosGenerados, ahorroTotalEstimadoBs, cashbackProyectadoBs };
 }
 
 /**

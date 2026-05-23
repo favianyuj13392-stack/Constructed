@@ -46,39 +46,101 @@ function Header() {
 
 // ── Bottom Nav ──────────────────────────────────────────────────────────────
 function BottomNav() {
-  return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 z-50 max-w-7xl mx-auto">
-      <Link href="/" className="flex flex-col items-center gap-0.5 text-xs text-gray-400 hover:text-[#1B5E3B] transition-colors">
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const items = [
+    {
+      label: 'Inicio',
+      icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" />
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 21V12h6v9" />
         </svg>
-        Inicio
-      </Link>
-      <button className="flex flex-col items-center gap-0.5 text-xs text-[#1B5E3B] font-semibold">
+      ),
+      href: '/',
+    },
+    {
+      label: 'Proyectos',
+      active: true,
+      icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
         </svg>
-        Proyectos
-      </button>
-      <Link href="/crear-proyecto" className="w-14 h-14 rounded-full bg-[#1B5E3B] flex items-center justify-center shadow-lg -mt-5 text-white hover:bg-[#164d30] transition-colors">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-5 h-5">
-          <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
-      </Link>
-      <button className="flex flex-col items-center gap-0.5 text-xs text-gray-400 hover:text-gray-600 transition-colors">
+      ),
+    },
+    { label: 'Nuevo', isCenter: true },
+    {
+      label: 'Combos',
+      icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" />
         </svg>
-        Combos
-      </button>
-      <button className="flex flex-col items-center gap-0.5 text-xs text-gray-400 hover:text-gray-600 transition-colors">
+      ),
+    },
+    {
+      label: 'Perfil',
+      icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" />
         </svg>
-        Perfil
-      </button>
-    </nav>
+      ),
+    },
+  ];
+
+  return (
+    <>
+      {toast && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[60] animate-fade-in">
+          <div className="bg-gray-800 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 whitespace-nowrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3.5 h-3.5 text-yellow-400 shrink-0">
+              <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            {toast}
+          </div>
+        </div>
+      )}
+
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 z-50 max-w-7xl mx-auto">
+        {items.map((item) =>
+          item.isCenter ? (
+            <Link
+              key={item.label}
+              href="/crear-proyecto"
+              className="w-14 h-14 rounded-full bg-[#1B5E3B] flex items-center justify-center shadow-lg -mt-5 text-white hover:bg-[#164d30] transition-colors duration-200"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-5 h-5">
+                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </Link>
+          ) : item.href ? (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="flex flex-col items-center gap-0.5 text-xs text-gray-400 hover:text-gray-600 transition-colors duration-150"
+            >
+              {item.icon}
+              {item.label}
+            </Link>
+          ) : (
+            <button
+              key={item.label}
+              onClick={item.active ? undefined : () => showToast('Disponible en la Versión 1.0 🚀')}
+              className={`flex flex-col items-center gap-0.5 text-xs transition-colors duration-150 ${
+                item.active ? 'text-[#1B5E3B] font-semibold' : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              {item.icon}
+              {item.label}
+            </button>
+          )
+        )}
+      </nav>
+    </>
   );
 }
 
