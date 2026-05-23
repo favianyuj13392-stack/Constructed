@@ -284,6 +284,11 @@ export default function Home() {
             projects={projects}
             isLoading={isLoadingProjects}
             searchQuery={searchTerm}
+            onDeleteProject={async (id) => {
+              const { deleteProject } = await import('./services/construredApi');
+              await deleteProject(id);
+              setProjects(prev => prev.filter(p => p.id !== id));
+            }}
           />
         </div>
 

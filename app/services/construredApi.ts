@@ -136,3 +136,63 @@ export async function getProjectById(id: string): Promise<IProyecto | null> {
     return null;
   }
 }
+
+/**
+ * Actualiza un proyecto en Supabase con fallback a localStorage.
+ */
+export async function updateProject(id: string, dataToUpdate: Partial<IProyecto>): Promise<IProyecto> {
+  // Intentar en Supabase primero
+  try {
+    const { data, error } = await supabase.from('proyectos').update(dataToUpdate).eq('id', id).select().single();
+    if (!error && data) {
+      // Sincronizar localStorage si existe ahí
+      if (typeof window !== 'undefined') {
+        const localProjects = getLocalProjects();
+        const index = localProjects.findIndex((p) => p.id === id);
+        if (index !== -1) {
+          localProjects[index] = { ...localProjects[index], ...dataToUpdate };
+          localStorage.setItem(LOCAL_KEY, JSON.stringify(localProjects));
+        }
+      }
+      return data as IProyecto;
+    }
+  } catch (error) {
+    console.error("Supabase update error:", error);
+  }
+
+  // Fallback a localStorage
+  let updatedProject: IProyecto | null = null;
+  if (typeof window !== 'undefined') {
+    const localProjects = getLocalProjects();
+    const index = localProjects.findIndex((p) => p.id === id);
+    if (index !== -1) {
+      localProjects[index] = { ...localProjects[index], ...dataToUpdate };
+      updatedProject = localProjects[index];
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(localProjects));
+    }
+  }
+
+  if (updatedProject) return updatedProject;
+
+  // Si no está en local ni se pudo actualizar, retornamos un mock para que no rompa
+  return { id, nombre: 'Proyecto actualizado', ubicacion: '', areaM2: 0, pisos: 0, estado: 'Borrador', ...dataToUpdate } as IProyecto;
+}
+
+/**
+ * Elimina un proyecto por su ID en Supabase y localStorage.
+ */
+export async function deleteProject(id: string): Promise<void> {
+  // Intentar en Supabase
+  try {
+    await supabase.from('proyectos').delete().eq('id', id);
+  } catch (error) {
+    console.error("Supabase delete error:", error);
+  }
+
+  // Siempre borrar del localStorage si existe
+  if (typeof window !== 'undefined') {
+    const localProjects = getLocalProjects();
+    const filtered = localProjects.filter((p) => p.id !== id);
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(filtered));
+  }
+}

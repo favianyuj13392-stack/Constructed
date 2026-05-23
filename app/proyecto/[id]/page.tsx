@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { getProjectById } from '../../services/construredApi';
+import { getProjectById, updateProject } from '../../services/construredApi';
 import usePresupuestoCalculator from '../../hooks/usePresupuestoCalculator';
 import type { IProyecto } from '../../types/construred';
 import ExecutiveSummary from '../../components/ExecutiveSummary';
@@ -175,13 +175,32 @@ export default function ProjectPage() {
   const [activeTab, setActiveTab] = useState<TabView>('resumen');
   const [activeFaseIdx, setActiveFaseIdx] = useState(0);
 
+  // Estados de edición
+  const [isEditing, setIsEditing] = useState(false);
+  const [editArea, setEditArea] = useState<number>(0);
+  const [editPisos, setEditPisos] = useState<number>(1);
+  const [isSaving, setIsSaving] = useState(false);
+
   useEffect(() => {
     if (!id) return;
     getProjectById(id).then((data) => {
       setProyecto(data);
+      if (data) {
+        setEditArea(data.areaM2 || 0);
+        setEditPisos(data.pisos || 1);
+      }
       setIsLoadingData(false);
     });
   }, [id]);
+
+  const handleSaveEdit = async () => {
+    if (!proyecto) return;
+    setIsSaving(true);
+    const updated = await updateProject(proyecto.id, { areaM2: editArea, pisos: editPisos });
+    setProyecto(updated);
+    setIsEditing(false);
+    setIsSaving(false);
+  };
 
   const { fasesCalculadas, totales, isCalculating } = usePresupuestoCalculator(proyecto?.areaM2 || 0, proyecto?.pisos || 1);
   const isLoading = isLoadingData || isCalculating;
@@ -196,12 +215,76 @@ export default function ProjectPage() {
       <Header />
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 pt-5">
-        {/* Título */}
-        <div className="mb-5">
-          <h1 className="text-2xl font-bold text-[#1B5E3B]">Dashboard Financiero</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            {proyecto ? `${proyecto.nombre} · ${proyecto.estado}` : 'Cargando...'}
-          </p>
+        {/* Título y Edición */}
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-[#1B5E3B]">Dashboard Financiero</h1>
+            <p className="text-sm text-gray-500 mt-1">
+              {proyecto ? `${proyecto.nombre} · ${proyecto.estado}` : 'Cargando...'}
+            </p>
+          </div>
+
+          {proyecto && (
+            <div className="bg-white rounded-xl p-3 border border-gray-200 shadow-sm min-w-[240px]">
+              {isEditing ? (
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <label className="flex-1">
+                      <span className="text-xs text-gray-500 block mb-1">Área (m²)</span>
+                      <input 
+                        type="number" 
+                        className="w-full text-sm border border-gray-300 rounded-lg p-1.5 focus:outline-none focus:border-[#1B5E3B]"
+                        value={editArea}
+                        onChange={(e) => setEditArea(Number(e.target.value))}
+                        min="1"
+                      />
+                    </label>
+                    <label className="flex-1">
+                      <span className="text-xs text-gray-500 block mb-1">Pisos</span>
+                      <input 
+                        type="number" 
+                        className="w-full text-sm border border-gray-300 rounded-lg p-1.5 focus:outline-none focus:border-[#1B5E3B]"
+                        value={editPisos}
+                        onChange={(e) => setEditPisos(Number(e.target.value))}
+                        min="1"
+                      />
+                    </label>
+                  </div>
+                  <div className="flex gap-2 mt-1">
+                    <button 
+                      onClick={() => setIsEditing(false)}
+                      className="flex-1 py-1.5 text-xs text-gray-500 font-medium hover:bg-gray-100 rounded-lg transition-colors"
+                      disabled={isSaving}
+                    >
+                      Cancelar
+                    </button>
+                    <button 
+                      onClick={handleSaveEdit}
+                      className="flex-1 py-1.5 text-xs text-white bg-[#1B5E3B] font-medium hover:bg-[#164d30] rounded-lg transition-colors flex items-center justify-center disabled:opacity-70"
+                      disabled={isSaving}
+                    >
+                      {isSaving ? 'Guardando...' : 'Guardar'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-gray-600">
+                    <span className="font-semibold text-gray-900">{proyecto.areaM2}</span> m² · <span className="font-semibold text-gray-900">{proyecto.pisos}</span> {proyecto.pisos === 1 ? 'piso' : 'pisos'}
+                  </div>
+                  <button 
+                    onClick={() => setIsEditing(true)}
+                    className="text-xs text-[#1B5E3B] font-semibold flex items-center gap-1 hover:underline"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-3.5 h-3.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                    Editar
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Tabs de navegación */}

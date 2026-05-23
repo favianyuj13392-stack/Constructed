@@ -40,11 +40,20 @@ const PROJECT_EXTRA: Record<string, { costo?: string; ahorro?: string; inicio: s
 
 interface ProjectCardProps {
   proyecto: IProyecto;
+  onDelete?: (id: string) => void;
 }
 
-function ProjectCard({ proyecto }: ProjectCardProps) {
+function ProjectCard({ proyecto, onDelete }: ProjectCardProps) {
   const extra = PROJECT_EXTRA[proyecto.id] ?? { inicio: '2024' };
   const hasPresupuesto = proyecto.estado === 'Presupuesto generado';
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (window.confirm(`¿Estás seguro de que deseas eliminar el proyecto "${proyecto.nombre}"?`)) {
+      onDelete?.(proyecto.id);
+    }
+  };
 
   const CardContent = (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex gap-3 items-start transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 hover:border-green-200 cursor-pointer group">
@@ -63,9 +72,22 @@ function ProjectCard({ proyecto }: ProjectCardProps) {
           <h3 className="text-sm font-bold text-[#1B5E3B] leading-tight line-clamp-2">
             {proyecto.nombre}
           </h3>
-          <svg viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth={2} className="w-4 h-4 shrink-0 mt-0.5 group-hover:stroke-[#1B5E3B] transition-colors duration-200">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6" />
-          </svg>
+          <div className="flex items-center gap-1 shrink-0 mt-0.5">
+            {proyecto.id !== 'proj-001' && (
+              <button 
+                onClick={handleDelete}
+                className="p-1 rounded hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
+                title="Eliminar proyecto"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            )}
+            <svg viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth={2} className="w-4 h-4 group-hover:stroke-[#1B5E3B] transition-colors duration-200">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6" />
+            </svg>
+          </div>
         </div>
 
         {/* Ubicación */}
@@ -151,9 +173,10 @@ interface ProjectListProps {
   projects: IProyecto[];
   isLoading: boolean;
   searchQuery: string;
+  onDeleteProject?: (id: string) => void;
 }
 
-export default function ProjectList({ projects, isLoading, searchQuery }: ProjectListProps) {
+export default function ProjectList({ projects, isLoading, searchQuery, onDeleteProject }: ProjectListProps) {
   if (isLoading) {
     return (
       <div className="space-y-3">
@@ -179,7 +202,7 @@ export default function ProjectList({ projects, isLoading, searchQuery }: Projec
   return (
     <div className="space-y-3">
       {filtered.map((proyecto) => (
-        <ProjectCard key={proyecto.id} proyecto={proyecto} />
+        <ProjectCard key={proyecto.id} proyecto={proyecto} onDelete={onDeleteProject} />
       ))}
     </div>
   );
