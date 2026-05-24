@@ -430,7 +430,7 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
   return (
     <div className="min-h-screen bg-gray-50">
       <Header onBack={onBack} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-32 pt-6 space-y-5">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-56 pt-6 space-y-5">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Cargar planos y documentos</h1>
           <p className="text-sm text-gray-500 mt-1">Sube los archivos de tu proyecto para que podamos analizarlos y generar tu presupuesto inicial.</p>
