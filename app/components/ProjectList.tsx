@@ -8,10 +8,10 @@ import { ProjectCardSkeleton } from './SkeletonCard';
 
 // ── Imágenes de proyectos (placeholders temáticos) ─────────────────────────
 const PROJECT_IMAGES: Record<string, string> = {
-  'proj-001': '/img/casa-las-palmas.jpg',
-  'proj-002': '/img/oficina-central.jpg',
-  'proj-003': '/img/local-comercial.jpg',
-  'proj-004': '/img/casa-campo.jpg',
+  'proj-001': '/assets/casa1.JPG',
+  'proj-002': '/assets/casa2.JPG',
+  'proj-003': '/assets/casa3.JPG',
+  'proj-004': '/assets/casa4.JPG',
 };
 
 // Fallback SVG para imágenes de proyecto
@@ -61,6 +61,8 @@ function ProjectCard({ proyecto, onDelete }: ProjectCardProps) {
       <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100 relative">
         {proyecto.imagen_id ? (
           <Image loader={cloudinaryLoader} src={proyecto.imagen_id} fill alt={proyecto.nombre} className="object-cover" />
+        ) : PROJECT_IMAGES[proyecto.id] ? (
+          <Image src={PROJECT_IMAGES[proyecto.id]} fill alt={proyecto.nombre} className="object-cover" />
         ) : (
           <ProjectImageFallback />
         )}

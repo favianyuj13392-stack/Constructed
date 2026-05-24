@@ -8,6 +8,7 @@ import usePresupuestoCalculator from '../../hooks/usePresupuestoCalculator';
 import type { IProyecto } from '../../types/construred';
 import ExecutiveSummary from '../../components/ExecutiveSummary';
 import PhaseTable from '../../components/PhaseTable';
+import Image from 'next/image';
 
 // ── Header ─────────────────────────────────────────────────────────────────
 function Header() {
@@ -19,16 +20,8 @@ function Header() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#1B5E3B] rounded-lg flex items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={2.5} className="w-4 h-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-sm font-bold text-[#1B5E3B] leading-none tracking-wide">CONSTRURED</p>
-            <p className="text-[10px] text-gray-400 leading-none">Construimos el futuro</p>
-          </div>
+        <div className="flex items-center">
+          <Image src="/assets/Logo.PNG" alt="Construred Logo" width={140} height={40} className="object-contain h-10 w-auto" priority />
         </div>
         <div className="flex items-center gap-2">
           <button className="relative p-1.5">
