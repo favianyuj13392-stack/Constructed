@@ -100,7 +100,7 @@ export async function createProject(proyectoData: Partial<IProyecto>): Promise<I
     areaM2: Number(proyectoData.areaM2) || 0,
     pisos: Number(proyectoData.pisos) || 1,
     estado: proyectoData.estado || 'Presupuesto generado',
-    imagen_id: proyectoData.imagen_id || null,
+    imagen_id: proyectoData.imagen_id || undefined,
   };
 
   try {
