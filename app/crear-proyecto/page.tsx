@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createProject } from '../services/construredApi';
@@ -178,7 +178,37 @@ interface FormData {
   fechaFin: string;
   calidad: 'Económica' | 'Estándar' | 'Premium';
   descripcion: string;
+  // Estructura
+  tipoEstructura?: string;
+  cargaViva?: string;
+  cargaAdicional?: string;
+  cargaMuerta?: string;
+  cargaPesoPropio?: string;
+  espesorLosa?: string;
+  ejeViguetas?: string;
+  apoyoViguetas?: string;
+  longitudComplementos?: string;
+  cargaTotal?: string;
+  relacionLe?: string;
 }
+
+const STRUCTURAL_DEFAULTS: Record<string, Partial<FormData>> = {
+  'vivienda': { tipoEstructura: 'Vivienda', cargaViva: '200', cargaAdicional: '0', cargaMuerta: '80', cargaPesoPropio: '188.08', espesorLosa: '20', ejeViguetas: '0.5', apoyoViguetas: '7.5', longitudComplementos: '120', cargaTotal: '468.08', relacionLe: '20.0' },
+  'comercial': { tipoEstructura: 'Comercial', cargaViva: '400', cargaAdicional: '0', cargaMuerta: '100', cargaPesoPropio: '210.50', espesorLosa: '20', ejeViguetas: '0.5', apoyoViguetas: '7.5', longitudComplementos: '120', cargaTotal: '710.50', relacionLe: '22.0' },
+  'industrial': { tipoEstructura: 'Industrial', cargaViva: '600', cargaAdicional: '50', cargaMuerta: '120', cargaPesoPropio: '250.00', espesorLosa: '25', ejeViguetas: '0.6', apoyoViguetas: '10.0', longitudComplementos: '100', cargaTotal: '1020.00', relacionLe: '25.0' },
+  'gimnasios': { tipoEstructura: 'Gimnasios', cargaViva: '500', cargaAdicional: '0', cargaMuerta: '80', cargaPesoPropio: '188.08', espesorLosa: '20', ejeViguetas: '0.5', apoyoViguetas: '7.5', longitudComplementos: '120', cargaTotal: '768.08', relacionLe: '22.5' },
+  'losas de cubierta sin acceso': { tipoEstructura: 'Cubierta', cargaViva: '100', cargaAdicional: '0', cargaMuerta: '80', cargaPesoPropio: '188.08', espesorLosa: '20', ejeViguetas: '0.5', apoyoViguetas: '7.5', longitudComplementos: '120', cargaTotal: '368.08', relacionLe: '20.0' },
+  'viviendas unifamiliares': { tipoEstructura: 'Vivienda Unifamiliar', cargaViva: '200', cargaAdicional: '0', cargaMuerta: '80', cargaPesoPropio: '188.08', espesorLosa: '20', ejeViguetas: '0.5', apoyoViguetas: '7.5', longitudComplementos: '120', cargaTotal: '468.08', relacionLe: '20.0' },
+  'oficinas privadas': { tipoEstructura: 'Oficinas', cargaViva: '250', cargaAdicional: '0', cargaMuerta: '100', cargaPesoPropio: '188.08', espesorLosa: '20', ejeViguetas: '0.5', apoyoViguetas: '7.5', longitudComplementos: '120', cargaTotal: '538.08', relacionLe: '21.0' },
+  'oficinas publicas': { tipoEstructura: 'Oficinas', cargaViva: '300', cargaAdicional: '0', cargaMuerta: '100', cargaPesoPropio: '210.50', espesorLosa: '20', ejeViguetas: '0.5', apoyoViguetas: '7.5', longitudComplementos: '120', cargaTotal: '610.50', relacionLe: '22.0' },
+  'aulas de escuelas': { tipoEstructura: 'Educación', cargaViva: '300', cargaAdicional: '0', cargaMuerta: '100', cargaPesoPropio: '210.50', espesorLosa: '20', ejeViguetas: '0.5', apoyoViguetas: '7.5', longitudComplementos: '120', cargaTotal: '610.50', relacionLe: '22.0' },
+  'pasillos de escuelas': { tipoEstructura: 'Educación', cargaViva: '400', cargaAdicional: '0', cargaMuerta: '100', cargaPesoPropio: '210.50', espesorLosa: '20', ejeViguetas: '0.5', apoyoViguetas: '7.5', longitudComplementos: '120', cargaTotal: '710.50', relacionLe: '22.0' },
+  'restaurantes': { tipoEstructura: 'Comercial', cargaViva: '400', cargaAdicional: '0', cargaMuerta: '120', cargaPesoPropio: '210.50', espesorLosa: '20', ejeViguetas: '0.5', apoyoViguetas: '7.5', longitudComplementos: '120', cargaTotal: '730.50', relacionLe: '22.0' },
+  'comercios particulares': { tipoEstructura: 'Comercial', cargaViva: '400', cargaAdicional: '0', cargaMuerta: '100', cargaPesoPropio: '210.50', espesorLosa: '20', ejeViguetas: '0.5', apoyoViguetas: '7.5', longitudComplementos: '120', cargaTotal: '710.50', relacionLe: '22.0' },
+  'estadios': { tipoEstructura: 'Estadios', cargaViva: '500', cargaAdicional: '50', cargaMuerta: '150', cargaPesoPropio: '250.00', espesorLosa: '25', ejeViguetas: '0.6', apoyoViguetas: '10.0', longitudComplementos: '100', cargaTotal: '950.00', relacionLe: '24.0' },
+  'sala de terapia hospitales': { tipoEstructura: 'Salud', cargaViva: '300', cargaAdicional: '0', cargaMuerta: '100', cargaPesoPropio: '210.50', espesorLosa: '20', ejeViguetas: '0.5', apoyoViguetas: '7.5', longitudComplementos: '120', cargaTotal: '610.50', relacionLe: '22.0' },
+  'fabricas en general': { tipoEstructura: 'Industrial', cargaViva: '600', cargaAdicional: '50', cargaMuerta: '120', cargaPesoPropio: '250.00', espesorLosa: '25', ejeViguetas: '0.6', apoyoViguetas: '10.0', longitudComplementos: '100', cargaTotal: '1020.00', relacionLe: '25.0' },
+};
 
 function StepForm({ onNext }: { onNext: (data: FormData) => void }) {
   const [form, setForm] = useState<FormData>({
@@ -186,6 +216,16 @@ function StepForm({ onNext }: { onNext: (data: FormData) => void }) {
     ubicacion: 'Santa Cruz, Bolivia', area: '', pisos: '',
     fechaInicio: '', fechaFin: '', calidad: 'Estándar', descripcion: '',
   });
+
+  useEffect(() => {
+    const key = form.tipoObra.toLowerCase();
+    if (STRUCTURAL_DEFAULTS[key]) {
+      setForm(prev => ({
+        ...prev,
+        ...STRUCTURAL_DEFAULTS[key]
+      }));
+    }
+  }, [form.tipoObra]);
 
   const set = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm(prev => ({ ...prev, [field]: e.target.value }));
@@ -224,7 +264,21 @@ function StepForm({ onNext }: { onNext: (data: FormData) => void }) {
               <label className={labelCls}>Tipo de obra</label>
               <div className="relative">
                 <select className={selectCls} value={form.tipoObra} onChange={set('tipoObra')}>
-                  <option>Vivienda</option><option>Comercial</option><option>Industrial</option>
+                  <option>Vivienda</option>
+                  <option>Comercial</option>
+                  <option>Industrial</option>
+                  <option>Gimnasios</option>
+                  <option>Losas de cubierta sin acceso</option>
+                  <option>Viviendas unifamiliares</option>
+                  <option>Oficinas privadas</option>
+                  <option>Oficinas publicas</option>
+                  <option>Aulas de escuelas</option>
+                  <option>Pasillos de escuelas</option>
+                  <option>Restaurantes</option>
+                  <option>Comercios particulares</option>
+                  <option>Estadios</option>
+                  <option>Sala de terapia hospitales</option>
+                  <option>Fabricas en general</option>
                 </select>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="absolute right-3 top-3.5 w-4 h-4 text-gray-400 pointer-events-none">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -296,7 +350,7 @@ function StepForm({ onNext }: { onNext: (data: FormData) => void }) {
 
           {/* Calidad */}
           <div>
-            <label className={labelCls}>Tipo de calidad / nivel de acabados</label>
+            <label className={labelCls}>¡Elige la calidad de tu obra fina!</label>
             <div className="grid grid-cols-3 gap-2">
               {CALIDADES.map(({ key }) => {
                 const active = form.calidad === key;
@@ -315,7 +369,61 @@ function StepForm({ onNext }: { onNext: (data: FormData) => void }) {
             </div>
           </div>
 
-          {/* Descripción */}
+        </div>
+
+        {/* Datos de Estructura */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
+          <h2 className="text-sm font-bold text-[#1B5E3B]">Datos de Estructura</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div>
+              <label className={labelCls}>Tipo de Estructura</label>
+              <input className={inputCls} value={form.tipoEstructura || ''} onChange={set('tipoEstructura')} />
+            </div>
+            <div>
+              <label className={labelCls}>Carga Viva (kg/m²)</label>
+              <input className={inputCls} type="number" value={form.cargaViva || ''} onChange={set('cargaViva')} />
+            </div>
+            <div>
+              <label className={labelCls}>Carga Adicional (kg/m²)</label>
+              <input className={inputCls} type="number" value={form.cargaAdicional || ''} onChange={set('cargaAdicional')} />
+            </div>
+            <div>
+              <label className={labelCls}>Carga Muerta (kg/m²)</label>
+              <input className={inputCls} type="number" value={form.cargaMuerta || ''} onChange={set('cargaMuerta')} />
+            </div>
+            <div>
+              <label className={labelCls}>Peso Propio (kg/m²)</label>
+              <input className={inputCls} type="number" value={form.cargaPesoPropio || ''} onChange={set('cargaPesoPropio')} step="0.01" />
+            </div>
+            <div>
+              <label className={labelCls}>Espesor Losa (cm)</label>
+              <input className={inputCls} type="number" value={form.espesorLosa || ''} onChange={set('espesorLosa')} />
+            </div>
+            <div>
+              <label className={labelCls}>Eje de Viguetas (m)</label>
+              <input className={inputCls} type="number" value={form.ejeViguetas || ''} onChange={set('ejeViguetas')} step="0.1" />
+            </div>
+            <div>
+              <label className={labelCls}>Apoyo de Viguetas (cm)</label>
+              <input className={inputCls} type="number" value={form.apoyoViguetas || ''} onChange={set('apoyoViguetas')} step="0.1" />
+            </div>
+            <div>
+              <label className={labelCls}>Long. Complementos (cm)</label>
+              <input className={inputCls} type="number" value={form.longitudComplementos || ''} onChange={set('longitudComplementos')} />
+            </div>
+            <div>
+              <label className={labelCls}>Carga Total (kg/m²)</label>
+              <input className={inputCls} type="number" value={form.cargaTotal || ''} onChange={set('cargaTotal')} step="0.01" />
+            </div>
+            <div>
+              <label className={labelCls}>Relación L/e</label>
+              <input className={inputCls} type="number" value={form.relacionLe || ''} onChange={set('relacionLe')} step="0.1" />
+            </div>
+          </div>
+        </div>
+
+        {/* Descripción (Movido al final) */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
           <div>
             <label className={labelCls}>Descripción adicional <span className="font-normal text-gray-400">(opcional)</span></label>
             <textarea
@@ -347,7 +455,7 @@ function StepForm({ onNext }: { onNext: (data: FormData) => void }) {
 // ── Paso 2: Carga de Planos ─────────────────────────────────────────────────
 interface FileEntry { label: string; formats: string; description: string; required: boolean; file: File | null; }
 
-function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => void }) {
+function StepUpload({ formData, onBack, onNext }: { formData: FormData; onBack: () => void; onNext: (cover: File | null) => void }) {
   const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
@@ -355,7 +463,7 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [comments, setComments] = useState('');
   const [files, setFiles] = useState<FileEntry[]>([
-    { label: 'Planos arquitectónicos', formats: 'PDF, JPG, PNG, DWG', description: 'Ej. Plantas, cortes, fachadas, etc.', required: true, file: null },
+    { label: 'Planos arquitectónicos', formats: 'PDF, JPG, PNG, DWG', description: 'Ej. Plantas, cortes, fachadas, etc.', required: false, file: null },
     { label: 'Cómputos métricos', formats: 'Excel, PDF, CSV', description: 'Archivo con metrados de la obra.', required: false, file: null },
     { label: 'Especificaciones técnicas', formats: 'PDF, DOC, DOCX', description: 'Memorias, especificaciones y detalles técnicos.', required: false, file: null },
     { label: 'Imágenes adicionales', formats: 'JPG, PNG', description: 'Fotos del terreno, entorno, referencias, etc.', required: false, file: null },
@@ -380,27 +488,7 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
   };
 
   const handleProcess = () => {
-    setIsProcessing(true);
-    setTimeout(async () => {
-      let imagen_id;
-      if (coverImage) {
-        try {
-          imagen_id = await uploadImage(coverImage);
-        } catch (error) {
-          console.error("Error uploading image:", error);
-        }
-      }
-
-      const nuevoProyecto = await createProject({
-        nombre: formData.nombre,
-        ubicacion: formData.ubicacion,
-        areaM2: Number(formData.area) || 0,
-        pisos: Number(formData.pisos) || 1,
-        estado: 'Presupuesto generado',
-        imagen_id,
-      });
-      router.push('/proyecto/' + nuevoProyecto.id);
-    }, 2000);
+    onNext(coverImage);
   };
 
   const handleSaveDraft = async () => {
@@ -421,6 +509,17 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
       pisos: Number(formData.pisos) || 1,
       estado: 'Borrador',
       imagen_id,
+      tipoEstructura: formData.tipoEstructura,
+      cargaViva: Number(formData.cargaViva) || 0,
+      cargaAdicional: Number(formData.cargaAdicional) || 0,
+      cargaMuerta: Number(formData.cargaMuerta) || 0,
+      cargaPesoPropio: Number(formData.cargaPesoPropio) || 0,
+      espesorLosa: Number(formData.espesorLosa) || 0,
+      ejeViguetas: Number(formData.ejeViguetas) || 0,
+      apoyoViguetas: Number(formData.apoyoViguetas) || 0,
+      longitudComplementos: Number(formData.longitudComplementos) || 0,
+      cargaTotal: Number(formData.cargaTotal) || 0,
+      relacionLe: Number(formData.relacionLe) || 0,
     });
     router.push('/');
   };
@@ -547,9 +646,9 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
           ) : (
             <>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
-              Procesar información
+              Continuar
             </>
           )}
         </button>
@@ -584,18 +683,195 @@ function StepUpload({ formData, onBack }: { formData: FormData; onBack: () => vo
   );
 }
 
+// ── Paso 3: Arma tu Combo ───────────────────────────────────────────────────
+function StepCombo({ formData, coverImage, onBack }: { formData: FormData; coverImage: File | null; onBack: () => void }) {
+  const router = useRouter();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [selected, setSelected] = useState<string[]>([]);
+  
+  const soboceProducts = [
+    { id: 'Cemento', title: 'Cemento SOBOCE', desc: 'Sacos de 50kg, alta resistencia inicial y final.', img: '/assets/cemento.png' },
+    { id: 'Hormigón', title: 'Hormigón Premezclado', desc: 'Dosificación exacta para tu obra, entrega en camión.', img: '/assets/hormigon.png' },
+    { id: 'Prefabricado', title: 'Prefabricados', desc: 'Viguetas, losas y elementos listos para instalar.', img: '/assets/prefabricado.png' }
+  ];
+  
+  const otherProducts = [
+    { id: 'Acero', desc: 'Barras corrugadas', img: '/assets/acero.png' },
+    { id: 'Ladrillo', desc: 'Cerámicos de construcción', img: '/assets/ladrillo.png' },
+    { id: 'Cemento blanco', desc: 'Para acabados finos', img: '/assets/cemento-blanco.png' },
+    { id: 'Cemento cola', desc: 'Adhesivo cerámico', img: '/assets/cemento-cola.png' },
+    { id: 'Pintura', desc: 'Látex e impermeabilizantes', img: '/assets/pintura.png' },
+    { id: 'Estuco', desc: 'Revestimiento interior', img: '/assets/estuco.png' },
+    { id: 'Yeso', desc: 'Acabados y molduras', img: '/assets/yeso.png' },
+    { id: 'Alambre', desc: 'Alambre de amarre', img: '/assets/alambre.png' },
+    { id: 'Cerámica', desc: 'Pisos y revestimientos', img: '/assets/ceramica.png' },
+    { id: 'Grifería', desc: 'Baños y cocinas', img: '/assets/griferia.png' }
+  ];
+
+  const toggleProduct = (prod: string) => {
+    setSelected(prev => prev.includes(prod) ? prev.filter(p => p !== prod) : [...prev, prod]);
+  };
+
+  const soboceCount = selected.filter(p => soboceProducts.some(sp => sp.id === p)).length;
+  const isValid = soboceCount >= 2;
+
+  const handleProcess = () => {
+    if (!isValid) return;
+    setIsProcessing(true);
+    setTimeout(async () => {
+      let imagen_id;
+      if (coverImage) {
+        try {
+          imagen_id = await uploadImage(coverImage);
+        } catch (error) {
+          console.error("Error uploading image:", error);
+        }
+      }
+
+      const nuevoProyecto = await createProject({
+        nombre: formData.nombre,
+        ubicacion: formData.ubicacion,
+        areaM2: Number(formData.area) || 0,
+        pisos: Number(formData.pisos) || 1,
+        estado: 'Presupuesto generado',
+        imagen_id,
+        productosCombo: selected,
+        tipoEstructura: formData.tipoEstructura,
+        cargaViva: Number(formData.cargaViva) || 0,
+        cargaAdicional: Number(formData.cargaAdicional) || 0,
+        cargaMuerta: Number(formData.cargaMuerta) || 0,
+        cargaPesoPropio: Number(formData.cargaPesoPropio) || 0,
+        espesorLosa: Number(formData.espesorLosa) || 0,
+        ejeViguetas: Number(formData.ejeViguetas) || 0,
+        apoyoViguetas: Number(formData.apoyoViguetas) || 0,
+        longitudComplementos: Number(formData.longitudComplementos) || 0,
+        cargaTotal: Number(formData.cargaTotal) || 0,
+        relacionLe: Number(formData.relacionLe) || 0,
+      });
+      router.push('/proyecto/' + nuevoProyecto.id);
+    }, 2000);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 pb-32">
+      <Header onBack={onBack} />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-8">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Arma tu combo</h1>
+          <p className="text-sm text-gray-500 mt-1">Selecciona los materiales que usarás. Mínimo 2 productos SOBOCE para procesar el proyecto.</p>
+        </div>
+
+        {/* Productos SOBOCE */}
+        <div>
+          <div className="flex items-center gap-3 mb-4">
+            <h2 className="text-base font-bold text-[#1B5E3B]">Productos SOBOCE</h2>
+            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 transition-colors ${soboceCount >= 2 ? 'bg-green-100 text-green-700' : 'bg-red-50 text-red-600'}`}>
+              {soboceCount >= 2 ? '✓ Listo' : '⚠️ Requerido'} ({soboceCount}/2)
+            </span>
+          </div>
+          <div className="flex flex-col gap-4">
+            {soboceProducts.map(prod => {
+              const isSelected = selected.includes(prod.id);
+              return (
+                <button
+                  key={prod.id}
+                  onClick={() => toggleProduct(prod.id)}
+                  className={`relative overflow-hidden flex items-stretch text-left rounded-2xl border-2 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-md bg-white ${
+                    isSelected ? 'border-[#1B5E3B] ring-2 ring-[#1B5E3B]/20 shadow-sm bg-green-50/20' : 'border-gray-100 hover:border-gray-300'
+                  }`}
+                >
+                  <div className={`w-1/3 sm:w-48 bg-gray-50 flex items-center justify-center p-4 border-r ${isSelected ? 'border-green-100' : 'border-gray-100'}`}>
+                    <img src={prod.img} alt={prod.title} className="w-full h-full object-contain drop-shadow-md max-h-32" />
+                  </div>
+                  <div className="flex-1 p-4 flex flex-col justify-center">
+                    <div className="flex justify-between items-start mb-1">
+                      <h3 className={`font-bold text-base md:text-lg ${isSelected ? 'text-[#1B5E3B]' : 'text-gray-800'}`}>{prod.title}</h3>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${isSelected ? 'bg-[#1B5E3B] border-[#1B5E3B] text-white' : 'border-gray-300'}`}>
+                        {isSelected && <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth={2} className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7l3 3 5-5" /></svg>}
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-500 leading-relaxed mt-1">{prod.desc}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Otros Materiales */}
+        <div>
+          <h2 className="text-base font-bold text-gray-700 mb-4">Otros Materiales y Acabados</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {otherProducts.map(prod => {
+              const isSelected = selected.includes(prod.id);
+              return (
+                <button
+                  key={prod.id}
+                  onClick={() => toggleProduct(prod.id)}
+                  className={`flex items-center p-3 rounded-xl border transition-all duration-200 text-left bg-white ${
+                    isSelected ? 'border-[#1B5E3B] bg-green-50/30 shadow-sm' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="w-12 h-12 shrink-0 mr-4 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden border border-gray-100">
+                    <img src={prod.img} alt={prod.id} className="w-8 h-8 object-contain opacity-80" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239ca3af" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'; }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className={`text-sm font-semibold truncate ${isSelected ? 'text-[#1B5E3B]' : 'text-gray-800'}`}>{prod.id}</h3>
+                    <p className="text-xs text-gray-400 truncate">{prod.desc}</p>
+                  </div>
+                  <div className={`w-4 h-4 ml-3 rounded border flex items-center justify-center shrink-0 ${isSelected ? 'bg-[#1B5E3B] border-[#1B5E3B] text-white' : 'border-gray-300'}`}>
+                    {isSelected && <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth={2} className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7l3 3 5-5" /></svg>}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </main>
+
+      <div className="fixed bottom-16 left-0 right-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-3 bg-gray-50/90 backdrop-blur-sm pt-4">
+        <button
+          onClick={handleProcess}
+          disabled={!isValid || isProcessing}
+          className="w-full bg-[#1B5E3B] text-white font-semibold rounded-2xl py-4 flex items-center justify-center gap-2 shadow-xl hover:bg-[#164d30] hover:shadow-2xl active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
+        >
+          {isProcessing ? (
+            <><IconSpinner />Generando Presupuesto Inteligente...</>
+          ) : (
+            <>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Finalizar y Generar Presupuesto
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ── Componente raíz con control de pasos ────────────────────────────────────
 export default function CrearProyectoPage() {
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [formData, setFormData] = useState<FormData>({
     nombre: '', tipoObra: 'Vivienda', tipoProyecto: 'Obra nueva',
     ubicacion: 'Santa Cruz, Bolivia', area: '', pisos: '',
     fechaInicio: '', fechaFin: '', calidad: 'Estándar', descripcion: '',
   });
+  const [coverImage, setCoverImage] = useState<File | null>(null);
 
   if (step === 1) {
     return <StepForm onNext={(data) => { setFormData(data); setStep(2); }} />;
   }
 
-  return <StepUpload formData={formData} onBack={() => setStep(1)} />;
+  if (step === 2) {
+    return <StepUpload 
+      formData={formData} 
+      onBack={() => setStep(1)} 
+      onNext={(cover) => { setCoverImage(cover); setStep(3); }} 
+    />;
+  }
+
+  return <StepCombo formData={formData} coverImage={coverImage} onBack={() => setStep(2)} />;
 }

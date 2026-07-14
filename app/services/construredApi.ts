@@ -101,6 +101,19 @@ export async function createProject(proyectoData: Partial<IProyecto>): Promise<I
     pisos: Number(proyectoData.pisos) || 1,
     estado: proyectoData.estado || 'Presupuesto generado',
     imagen_id: proyectoData.imagen_id || undefined,
+    // Estructura
+    tipoEstructura: proyectoData.tipoEstructura,
+    cargaViva: proyectoData.cargaViva,
+    cargaAdicional: proyectoData.cargaAdicional,
+    cargaMuerta: proyectoData.cargaMuerta,
+    cargaPesoPropio: proyectoData.cargaPesoPropio,
+    espesorLosa: proyectoData.espesorLosa,
+    ejeViguetas: proyectoData.ejeViguetas,
+    apoyoViguetas: proyectoData.apoyoViguetas,
+    longitudComplementos: proyectoData.longitudComplementos,
+    cargaTotal: proyectoData.cargaTotal,
+    relacionLe: proyectoData.relacionLe,
+    productosCombo: proyectoData.productosCombo || [],
   };
 
   try {

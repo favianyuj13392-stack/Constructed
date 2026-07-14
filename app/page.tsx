@@ -212,10 +212,10 @@ export default function Home() {
         {/* Saludo */}
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            ¡Hola, Constructor! <span role="img" aria-label="wave">👋</span>
+            ¡Hola, Bienvenido! <span role="img" aria-label="wave">👋</span>
           </h1>
           <p className="text-sm text-gray-500 mt-1 leading-snug">
-            Gestiona tus proyectos y obtén presupuestos<br />de forma rápida y sencilla.
+            Presupuesta en tiempo real, optimiza costos con combos exclusivos<br />y maximiza tu cashback por fase.
           </p>
         </div>
 
