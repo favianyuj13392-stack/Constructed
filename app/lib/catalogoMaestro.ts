@@ -1,3 +1,5 @@
+import type { ISubMaterial } from '../types/construred';
+
 export interface IItemCatalogo {
   id: string;
   fase: 'PRIMERA FASE' | 'SEGUNDA FASE' | 'TERCERA FASE' | 'CUARTA FASE';
@@ -6,6 +8,7 @@ export interface IItemCatalogo {
   precioMercadoBs: number;
   precioComboBs?: number;
   rendimientoM2: number;
+  subMateriales?: ISubMaterial[];
 }
 
 export const CATALOGO_MATERIALES: IItemCatalogo[] = [
@@ -45,6 +48,13 @@ export const CATALOGO_MATERIALES: IItemCatalogo[] = [
     precioMercadoBs: 1500.0,
     precioComboBs: 1285.60,
     rendimientoM2: 0.0130,
+    subMateriales: [
+      { nombre: 'Cemento Portland (SOBOCE)', cantidadUnitaria: 350, unidad: 'kg' },
+      { nombre: 'Arena lavada', cantidadUnitaria: 0.45, unidad: 'm³' },
+      { nombre: 'Grava triturada', cantidadUnitaria: 0.85, unidad: 'm³' },
+      { nombre: 'Acero corrugado', cantidadUnitaria: 45, unidad: 'kg' },
+      { nombre: 'Agua', cantidadUnitaria: 180, unidad: 'lt' }
+    ]
   },
   {
     id: 'mat-02-02',
@@ -53,6 +63,14 @@ export const CATALOGO_MATERIALES: IItemCatalogo[] = [
     unidad: 'm³',
     precioMercadoBs: 1600.0,
     rendimientoM2: 0.0052,
+    subMateriales: [
+      { nombre: 'Cemento Portland (SOBOCE)', cantidadUnitaria: 350, unidad: 'kg' },
+      { nombre: 'Arena lavada', cantidadUnitaria: 0.45, unidad: 'm³' },
+      { nombre: 'Grava triturada', cantidadUnitaria: 0.85, unidad: 'm³' },
+      { nombre: 'Acero corrugado', cantidadUnitaria: 90, unidad: 'kg' },
+      { nombre: 'Alambre de amarre', cantidadUnitaria: 1.5, unidad: 'kg' },
+      { nombre: 'Madera de encofrado', cantidadUnitaria: 12, unidad: 'p2' }
+    ]
   },
   {
     id: 'mat-02-03',
@@ -72,6 +90,11 @@ export const CATALOGO_MATERIALES: IItemCatalogo[] = [
     precioMercadoBs: 52.0,
     precioComboBs: 51.98,
     rendimientoM2: 6.2827,
+    subMateriales: [
+      { nombre: 'Ladrillo 6 huecos', cantidadUnitaria: 25, unidad: 'pza' },
+      { nombre: 'Cemento Portland', cantidadUnitaria: 5.5, unidad: 'kg' },
+      { nombre: 'Arena fina', cantidadUnitaria: 0.02, unidad: 'm³' }
+    ]
   },
   {
     id: 'mat-03-02',

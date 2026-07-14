@@ -16,7 +16,6 @@ interface ExecutiveSummaryProps {
 }
 
 export default function ExecutiveSummary({ fasesCalculadas, totales, onViewPhases, proyecto }: ExecutiveSummaryProps) {
-  const totalBOB = totales.granTotalMercadoBs * 6.96;
   const pct = totales.granTotalMercadoBs > 0
     ? ((totales.granAhorroBs / totales.granTotalMercadoBs) * 100).toFixed(2)
     : '0.00';
@@ -46,7 +45,7 @@ export default function ExecutiveSummary({ fasesCalculadas, totales, onViewPhase
         <div className="flex items-center gap-4">
           <div className="bg-gray-50 rounded-xl p-3 flex-1">
             <p className="text-xs text-gray-500">Costo total estimado</p>
-            <p className="text-xl font-bold text-gray-900">USD {fmt(totales.granTotalMercadoBs)}</p>
+            <p className="text-xl font-bold text-gray-900">Bs {fmt(totales.granTotalMercadoBs)}</p>
           </div>
           <div className="flex flex-col items-center gap-1">
             <div className="w-16 h-16 rounded-full bg-[#1B5E3B] flex items-center justify-center">
@@ -75,13 +74,13 @@ export default function ExecutiveSummary({ fasesCalculadas, totales, onViewPhase
         <div className="flex gap-3 items-end mb-4">
           <div className="bg-green-50 rounded-xl p-3 flex-shrink-0">
             <p className="text-xs text-gray-500">Ahorro total estimado</p>
-            <p className="text-2xl font-bold text-[#1B5E3B]">USD {fmt(totales.granAhorroBs)}</p>
+            <p className="text-2xl font-bold text-[#1B5E3B]">Bs {fmt(totales.granAhorroBs)}</p>
             <p className="text-xs text-gray-400">vs mercado tradicional</p>
           </div>
           <div className="flex-1 flex items-end gap-2 h-24">
             {/* Bar mercado */}
             <div className="flex flex-col items-center gap-1 flex-1">
-              <p className="text-[10px] text-gray-500 font-semibold">USD {fmt(totales.granTotalMercadoBs)}</p>
+              <p className="text-[10px] text-gray-500 font-semibold">Bs {fmt(totales.granTotalMercadoBs)}</p>
               <div className="w-full bg-gray-300 rounded-t-lg" style={{ height: '64px' }} />
               <p className="text-[9px] text-gray-500 text-center">Mercado tradicional</p>
             </div>
@@ -95,7 +94,7 @@ export default function ExecutiveSummary({ fasesCalculadas, totales, onViewPhase
             </div>
             {/* Bar combo */}
             <div className="flex flex-col items-center gap-1 flex-1">
-              <p className="text-[10px] text-[#1B5E3B] font-semibold">USD {fmt(totales.granTotalComboBs)}</p>
+              <p className="text-[10px] text-[#1B5E3B] font-semibold">Bs {fmt(totales.granTotalComboBs)}</p>
               <div className="w-full bg-[#1B5E3B] rounded-t-lg" style={{ height: '60px' }} />
               <p className="text-[9px] text-gray-500 text-center">Combos Construred</p>
             </div>
@@ -109,9 +108,9 @@ export default function ExecutiveSummary({ fasesCalculadas, totales, onViewPhase
             <thead className="bg-gray-50">
               <tr>
                 <th className="text-left px-3 py-2 text-gray-500 font-semibold">FASE</th>
-                <th className="text-right px-2 py-2 text-gray-500 font-semibold">MERCADO (BOB)</th>
-                <th className="text-right px-2 py-2 text-gray-500 font-semibold">COMBOS (BOB)</th>
-                <th className="text-right px-3 py-2 text-[#1B5E3B] font-semibold">AHORRO (BOB)</th>
+                <th className="text-right px-2 py-2 text-gray-500 font-semibold">MERCADO (Bs)</th>
+                <th className="text-right px-2 py-2 text-gray-500 font-semibold">COMBOS (Bs)</th>
+                <th className="text-right px-3 py-2 text-[#1B5E3B] font-semibold">AHORRO (Bs)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -126,14 +125,14 @@ export default function ExecutiveSummary({ fasesCalculadas, totales, onViewPhase
                       </div>
                     </div>
                   </td>
-                  <td className="px-2 py-2.5 text-right text-gray-700">{fmt(fase.subtotalMercadoBs * 6.96)}</td>
-                  <td className="px-2 py-2.5 text-right text-gray-700">{fmt(fase.subtotalComboBs * 6.96)}</td>
-                  <td className="px-3 py-2.5 text-right font-bold text-[#1B5E3B]">{fmt(fase.ahorroFaseBs * 6.96)}</td>
+                  <td className="px-2 py-2.5 text-right text-gray-700">{fmt(fase.subtotalMercadoBs)}</td>
+                  <td className="px-2 py-2.5 text-right text-gray-700">{fmt(fase.subtotalComboBs)}</td>
+                  <td className="px-3 py-2.5 text-right font-bold text-[#1B5E3B]">{fmt(fase.ahorroFaseBs)}</td>
                 </tr>
               ))}
               <tr className="bg-green-50 font-bold">
                 <td colSpan={3} className="px-3 py-2.5 text-[#1B5E3B] text-xs">TOTAL AHORRO</td>
-                <td className="px-3 py-2.5 text-right text-[#1B5E3B] text-sm">{fmt(totales.granAhorroBs * 6.96)}</td>
+                <td className="px-3 py-2.5 text-right text-[#1B5E3B] text-sm">{fmt(totales.granAhorroBs)}</td>
               </tr>
             </tbody>
           </table>
@@ -165,8 +164,7 @@ export default function ExecutiveSummary({ fasesCalculadas, totales, onViewPhase
               <tr>
                 <th className="text-left px-3 py-2 text-gray-500 font-semibold">FASE</th>
                 <th className="text-left px-2 py-2 text-gray-500 font-semibold">DESCRIPCIÓN</th>
-                <th className="text-right px-2 py-2 text-gray-500 font-semibold">USD</th>
-                <th className="text-right px-3 py-2 text-gray-500 font-semibold">BOB</th>
+                <th className="text-right px-3 py-2 text-gray-500 font-semibold">TOTAL (Bs)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -179,14 +177,12 @@ export default function ExecutiveSummary({ fasesCalculadas, totales, onViewPhase
                     </div>
                   </td>
                   <td className="px-2 py-2.5 text-gray-500">{fase.descripcion}</td>
-                  <td className="px-2 py-2.5 text-right text-gray-800 font-medium">{fmt(fase.subtotalMercadoBs)}</td>
-                  <td className="px-3 py-2.5 text-right text-gray-600">{fmt(fase.subtotalMercadoBs * 6.96)}</td>
+                  <td className="px-3 py-2.5 text-right text-gray-800 font-medium">{fmt(fase.subtotalMercadoBs)}</td>
                 </tr>
               ))}
               <tr className="bg-green-50 font-bold">
                 <td colSpan={2} className="px-3 py-2.5 text-[#1B5E3B] text-xs">Total estimado del proyecto</td>
-                <td className="px-2 py-2.5 text-right text-[#1B5E3B]">{fmt(totales.granTotalMercadoBs)}</td>
-                <td className="px-3 py-2.5 text-right text-[#1B5E3B]">{fmt(totalBOB)}</td>
+                <td className="px-3 py-2.5 text-right text-[#1B5E3B]">{fmt(totales.granTotalMercadoBs)}</td>
               </tr>
             </tbody>
           </table>

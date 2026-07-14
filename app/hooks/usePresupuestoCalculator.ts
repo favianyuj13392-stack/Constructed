@@ -14,7 +14,6 @@ import { CATALOGO_MATERIALES } from '../lib/catalogoMaestro';
 
 export interface ICalculatedMaterial extends IMaterial {
   totalMercadoBs: number;
-  totalMercadoUSD: number; // totalMercadoBs * 6.96 (regla visual estricta)
   totalComboBs: number;
   ahorroBs: number;
 }
@@ -39,10 +38,6 @@ export interface IUsePresupuesto {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Constante del factor de conversión visual (PRD: multiplicación directa)
-// ─────────────────────────────────────────────────────────────────────────────
-const TC_FACTOR = 6.96;
-
 const FASES_BASE = ['PRIMERA FASE', 'SEGUNDA FASE', 'TERCERA FASE', 'CUARTA FASE'];
 const FASES_DESC: Record<string, string> = {
   'PRIMERA FASE': 'Obras Preliminares',
@@ -99,29 +94,27 @@ export default function usePresupuestoCalculator(areaM2: number, pisos: number =
 
     CATALOGO_MATERIALES.forEach(item => {
       // Paso A: Cantidades
-      const cantidadCalculada = parseFloat((item.rendimientoM2 * areaM2).toFixed(4));
+      const cantidad = item.rendimientoM2 * areaM2;
       
       // Paso B: Totales del Ítem
-      const totalMercadoBs = cantidadCalculada * item.precioMercadoBs;
+      const totalMercadoBs = cantidad * item.precioMercadoBs;
       
       // Paso C: Combos
-      const totalComboBs = cantidadCalculada * (item.precioComboBs ?? item.precioMercadoBs);
-      
-      // Paso D: Ahorro y USD
-      const ahorroBs = totalMercadoBs - totalComboBs;
-      const totalMercadoUSD = totalMercadoBs * TC_FACTOR;
+      const isComboActive = item.precioComboBs !== undefined;
+      const totalComboBs = Number((cantidad * (isComboActive ? item.precioComboBs! : item.precioMercadoBs)).toFixed(2));
+      const ahorroBs = Number((totalMercadoBs - totalComboBs).toFixed(2));
 
       const calcMat: ICalculatedMaterial = {
         id: item.id,
         descripcion: item.descripcion,
         unidad: item.unidad,
         precioUnitarioBs: item.precioMercadoBs,
-        cantidad: parseFloat(cantidadCalculada.toFixed(2)),
-        precioComboBs: item.precioComboBs,
+        precioComboBs: isComboActive ? item.precioComboBs : undefined,
+        cantidad: Number(cantidad.toFixed(2)),
         totalMercadoBs,
-        totalMercadoUSD,
         totalComboBs,
         ahorroBs,
+        subMateriales: item.subMateriales,
       };
 
       if (!fasesMap.has(item.fase)) {
